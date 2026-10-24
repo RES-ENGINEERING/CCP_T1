@@ -40,6 +40,7 @@ target_include_directories(CCP_T1 PRIVATE
 target_link_libraries(CCP_T1 PRIVATE
     glfw
     OpenGL::GL
+    dwmapi
 )
 
 set_target_properties(CCP_T1 PROPERTIES

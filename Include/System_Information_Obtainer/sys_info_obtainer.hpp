@@ -23,4 +23,17 @@ namespace HW
     };
 
     RAM_Info Obtain_RAM_Info();
+
+    struct Storage_Info
+    {
+        double total_gb{};
+        double used_gb{};
+        double available_gb{};
+
+        double total_gib{};
+        double used_gib{};
+        double available_gib{};
+    };
+
+    Storage_Info Obtain_Storage_Info(const wchar_t* drive);
 }

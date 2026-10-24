@@ -51,4 +51,36 @@ namespace HW
             available_gib
         };
     }
+
+    Storage_Info Obtain_Storage_Info(const wchar_t* drive)
+    {
+        ULARGE_INTEGER available_bytes{};
+        ULARGE_INTEGER total_bytes{};
+        ULARGE_INTEGER free_bytes{};
+
+        if (!GetDiskFreeSpaceExW(
+            drive,
+            &available_bytes,
+            &total_bytes,
+            &free_bytes))
+        {
+            return {};
+        }
+
+        constexpr double bytes_per_gb = 1'000'000'000.0;
+        constexpr double bytes_per_gib = 1'073'741'824.0;
+
+        const double total = static_cast<double>(total_bytes.QuadPart);
+        const double available = static_cast<double>(available_bytes.QuadPart);
+        const double used = total - static_cast<double>(free_bytes.QuadPart);
+
+        return {
+            total / bytes_per_gb,
+            used / bytes_per_gb,
+            available / bytes_per_gb,
+            total / bytes_per_gib,
+            used / bytes_per_gib,
+            available / bytes_per_gib
+        };
+    }
 }

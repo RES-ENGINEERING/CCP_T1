@@ -1,17 +1,20 @@
 
  // Header communication
-
+#define GLFW_EXPOSE_NATIVE_WIN32
 
 // External include
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 
 // C++ include
 #include <stdexcept>
 #include <windows.h>
 #include <print>
+#include <dwmapi.h>
+
 
 // Project include
 #include "Window_Manager/window_mngr.hpp"
@@ -23,6 +26,14 @@ int main()
 {
 
     Window window(1280, 720, "CCP_T1");
+
+    HWND hwnd = glfwGetWin32Window(window.Get_Handle());
+
+    COLORREF title_bar_color = RGB(20, 20, 20);
+    COLORREF text_color = RGB(255, 255, 255);
+
+    DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &title_bar_color, sizeof(title_bar_color));
+    DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &text_color, sizeof(text_color));
 
     if (!GUI::Initialize(window))
         return 1;
