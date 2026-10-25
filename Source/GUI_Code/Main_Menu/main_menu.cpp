@@ -9,6 +9,7 @@
 
 // Project include
 #include "System_Information_Obtainer/sys_info_obtainer.hpp"
+#include "GUI_Manager/gui_element_mngr.hpp"
 
 
 
@@ -26,19 +27,19 @@ namespace GUI::Main_Menu
         static bool show_monitoring_panel_subwindow = true;
         static bool show_system_information_panel_subwindow = true;
         static bool show_notepad_panel_subwindow = true;
+        static bool show_alarm_and_indicator_panel_subwindow = true;
 
         static char notepad_text_buffer[16384] = "";
-        static char notepad_directory_file_buffer[4096] = "";
-        const std::string& notepad_directory_file_open = notepad_directory_file_buffer;
 
 
 
         // Subwindow 1
-        ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(20.0, 20.0), ImGuiCond_FirstUseEver);
         ImGui::Begin("Subwindow Subcontrol Panel");
             ImGui::Checkbox("Show 'CCP_T1 Information Panel", &show_ccp_t1_panel_subwindow);
             ImGui::Checkbox("Show 'Monitoring Panel", &show_monitoring_panel_subwindow);
             ImGui::Checkbox("Show 'Notepad Panel", &show_notepad_panel_subwindow);
+            ImGui::Checkbox("Show 'Alarm Panel", &show_alarm_and_indicator_panel_subwindow);
         ImGui::End();
 
 
@@ -46,11 +47,11 @@ namespace GUI::Main_Menu
         // Subwindow 2
         if (show_ccp_t1_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400.0f, 20.0f), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(400.0, 20.0), ImGuiCond_FirstUseEver);
             ImGui::Begin("Information Panel");
 
                 ImGui::Text("Computer Control Panel Type I");
-                ImGui::Text("Version: 0.1.0.0");
+                ImGui::Text("Version: 0.3.0.0");
                 if (ImGui::TreeNode("Conventions"))
                 {
                     if (ImGui::TreeNode("Versioning Format"))
@@ -75,7 +76,7 @@ namespace GUI::Main_Menu
         // Subwindow 3
         if (show_monitoring_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(20.0, 20.f), ImGuiCond_FirstUseEver);
             ImGui::Begin("Monitoring Panel");
                 if (ImGui::CollapsingHeader("RAM"))
                 {
@@ -92,17 +93,16 @@ namespace GUI::Main_Menu
                     ImGui::Text("Used: %.2f GB", storage_info.used_gb);
                     ImGui::Text("Available: %.2f GB", storage_info.available_gb);
 
-                    const float storage_usage = storage_info.total_gb > 0.0
-                        ? static_cast<float>(storage_info.used_gb / storage_info.total_gb)
-                        : 0.0f;
+                    const float storage_usage = storage_info.total_gb > 0.0 ? static_cast<float>(storage_info.used_gb / storage_info.total_gb) : 0.0;
 
                     ImGui::Text("Usage: %.2f %%", storage_usage * 100);
-
-                    ImGui::ProgressBar(storage_usage, ImVec2(-1.0f, 0.0f));
+                    ImGui::ProgressBar(storage_usage, ImVec2(-1.0, 0.0));
 
                     ImGui::SeparatorText("Binary GiB");
 
                     ImGui::Text("Total: %.2f GiB", storage_info.total_gib);
+                    ImGui::Text("Used: %.2f GiB", storage_info.used_gib);
+                    ImGui::Text("Available: %.2f GiB", storage_info.available_gib);
                 }
             ImGui::End();
         }
@@ -112,7 +112,7 @@ namespace GUI::Main_Menu
         // Subwindow 4
         if (show_notepad_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(400.0, 200.0), ImGuiCond_FirstUseEver);
             ImGui::Begin("Notepad Panel");
 
                 ImGui::InputTextMultiline(
@@ -122,6 +122,20 @@ namespace GUI::Main_Menu
                     ImVec2(-1.0f, -1.0f)
                 );
                 
+            ImGui::End();
+        }
+
+
+
+        // Subwindow 5
+        if (show_alarm_and_indicator_panel_subwindow)
+        {
+            ImGui::SetNextWindowPos(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
+            ImGui::Begin("Alarm/Indicator Panel");
+                GUI::Cycle_Blink(0.5);
+                GUI::Blinking_Text("flashing", ImVec4(0.0, 1.0, 1.0, 1.0), "Information", 2.0);
+                GUI::Blinking_Text("flashing", ImVec4(1.0, 0.0, 0.0, 1.0), "Critical Error/Critical Warning/Attention", 4.0);
+                GUI::Blinking_Text("flashing", ImVec4(1.0, 1.0, 0.0, 1.0), "Warning/Attention", 3.0);
             ImGui::End();
         }
     }

@@ -19,6 +19,7 @@ add_executable(CCP_T1 WIN32
     Source/GUI_Manager/gui_mngr.cpp
     Source/GUI_Code/Main_Menu/main_menu.cpp
     Source/System_Information_Obtainer/sys_info_obtainer.cpp
+    Source/GUI_Manager/gui_element_mngr.cpp
 
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
