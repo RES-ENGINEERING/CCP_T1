@@ -6,22 +6,41 @@
 
 // C++ include
 #include <string>
+#include <format>
 
 // Project include
 #include "System_Information_Obtainer/sys_info_obtainer.hpp"
 #include "GUI_Manager/gui_element_mngr.hpp"
-
+#include "Timestamp_System/timestamp_sys.hpp"
+#include "Chrono_System/chrono_sys.hpp"
+#include "Text_Format_System/text_format_sys.hpp"
 
 
 namespace GUI::Main_Menu
 {
+    /* Prototype. Do not remove.
     static int amount = 50;
     static int poop_amount = 50;
+    */
+    
 
     void Render_Main_Menu()
     {
-        const auto ram_info = HW::Obtain_RAM_Info();
-        const auto storage_info = HW::Obtain_Storage_Info(L"C:\\");
+        static auto ram_info = HW::Obtain_RAM_Info();
+        static auto storage_info = HW::Obtain_Storage_Info(L"C:\\");
+
+        static auto last_update = std::chrono::steady_clock::now();
+        const auto current_time = std::chrono::steady_clock::now();
+
+        if (current_time - last_update >= std::chrono::seconds(1))
+        {
+            ram_info = HW::Obtain_RAM_Info();
+            storage_info = HW::Obtain_Storage_Info(L"C:\\");
+
+            last_update = current_time;
+        }
+
+        static auto timestamp = Time::Get_Current_System_Clock_Time();
         
         static bool show_ccp_t1_panel_subwindow = true;
         static bool show_monitoring_panel_subwindow = true;
@@ -76,7 +95,7 @@ namespace GUI::Main_Menu
         // Subwindow 3
         if (show_monitoring_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(20.0, 20.f), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(20.0, 20.0), ImGuiCond_FirstUseEver);
             ImGui::Begin("Monitoring Panel");
                 if (ImGui::CollapsingHeader("RAM"))
                 {
@@ -119,7 +138,7 @@ namespace GUI::Main_Menu
                     "##Notepad_Panel",
                     notepad_text_buffer,
                     sizeof(notepad_text_buffer),
-                    ImVec2(-1.0f, -1.0f)
+                    ImVec2(-1.0, -1.0)
                 );
                 
             ImGui::End();
@@ -130,12 +149,9 @@ namespace GUI::Main_Menu
         // Subwindow 5
         if (show_alarm_and_indicator_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(400.0, 200.0), ImGuiCond_FirstUseEver);
             ImGui::Begin("Alarm/Indicator Panel");
-                GUI::Cycle_Blink(0.5);
-                GUI::Blinking_Text("flashing", ImVec4(0.0, 1.0, 1.0, 1.0), "Information", 2.0);
-                GUI::Blinking_Text("flashing", ImVec4(1.0, 0.0, 0.0, 1.0), "Critical Error/Critical Warning/Attention", 4.0);
-                GUI::Blinking_Text("flashing", ImVec4(1.0, 1.0, 0.0, 1.0), "Warning/Attention", 3.0);
+                GUI::Blinking_Text("flashing", ImVec4(0.0, 1.0, 1.0, 1.0), Format::Format_Timestamp_Message("Hello").c_str(), 2.0);
             ImGui::End();
         }
     }

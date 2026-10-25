@@ -1,5 +1,4 @@
-
- // Header communication
+// Header communication
 #define GLFW_EXPOSE_NATIVE_WIN32
 
 // External include
@@ -15,11 +14,11 @@
 #include <print>
 #include <dwmapi.h>
 
-
 // Project include
 #include "Window_Manager/window_mngr.hpp"
 #include "GUI_Manager/gui_mngr.hpp"
 #include "GUI_Code/Main_Menu/main_menu.hpp"
+#include "Chrono_System/chrono_sys.hpp"
 
 
 int main()
@@ -38,6 +37,7 @@ int main()
     if (!GUI::Initialize(window))
         return 1;
 
+    glfwSwapInterval(1);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     while (!window.Should_Close())

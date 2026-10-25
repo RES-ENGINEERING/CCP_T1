@@ -20,6 +20,9 @@ add_executable(CCP_T1 WIN32
     Source/GUI_Code/Main_Menu/main_menu.cpp
     Source/System_Information_Obtainer/sys_info_obtainer.cpp
     Source/GUI_Manager/gui_element_mngr.cpp
+    Source/Timestamp_System/timestamp_sys.cpp
+    Source/Chrono_System/chrono_sys.cpp
+    Source/Text_Format_System/text_format_sys.cpp
 
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
