@@ -51,7 +51,7 @@ namespace GUI::Main_Menu
             ImGui::Begin("Information Panel");
 
                 ImGui::Text("Computer Control Panel Type I");
-                ImGui::Text("Version: 0.3.0.0");
+                ImGui::Text("Version: 0.4.1.0");
                 if (ImGui::TreeNode("Conventions"))
                 {
                     if (ImGui::TreeNode("Versioning Format"))
