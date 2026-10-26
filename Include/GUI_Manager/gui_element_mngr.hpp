@@ -13,6 +13,13 @@
 
 namespace GUI
 {
-    bool Cycle_Blink(float time_multiplier);
-    void Blinking_Text(const std::string& blinking_type, const ImVec4& text_color, const char* text, float blinking_speed);
+    struct Text_Data
+    {
+        std::string text_type = "default";
+        ImVec4 text_color = {1, 1, 1, 1};
+        float blinking_speed = 1.0f;
+    };
+    
+    bool Cycle_True_False(float time_multiplier);
+    void Text(const Text_Data& data, const std::string& text);
 }

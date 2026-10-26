@@ -50,10 +50,23 @@ namespace GUI::Main_Menu
 
         static char notepad_text_buffer[16384] = "";
 
+        static Text_Data text_data_information;
+            text_data_information.text_type = "blinking";
+            text_data_information.blinking_speed = 1;
+            text_data_information.text_color = Format::Format_ImGui_Vector_4("light_blue");
+        static Text_Data text_data_warning;
+            text_data_warning.text_type = "blinking";
+            text_data_warning.blinking_speed = 4;
+            text_data_warning.text_color = Format::Format_ImGui_Vector_4("yellow");
+        static Text_Data text_data_critical;
+            text_data_critical.text_type = "blinking";
+            text_data_critical.blinking_speed = 7;
+            text_data_critical.text_color = Format::Format_ImGui_Vector_4("red");
+
 
 
         // Subwindow 1
-        ImGui::SetNextWindowPos(ImVec2(20.0, 20.0), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
         ImGui::Begin("Subwindow Subcontrol Panel");
             ImGui::Checkbox("Show 'CCP_T1 Information Panel", &show_ccp_t1_panel_subwindow);
             ImGui::Checkbox("Show 'Monitoring Panel", &show_monitoring_panel_subwindow);
@@ -66,11 +79,11 @@ namespace GUI::Main_Menu
         // Subwindow 2
         if (show_ccp_t1_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400.0, 20.0), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(400, 20), ImGuiCond_FirstUseEver);
             ImGui::Begin("Information Panel");
 
                 ImGui::Text("Computer Control Panel Type I");
-                ImGui::Text("Version: 0.4.1.0");
+                ImGui::Text("Version: 0.6.1.0");
                 if (ImGui::TreeNode("Conventions"))
                 {
                     if (ImGui::TreeNode("Versioning Format"))
@@ -95,7 +108,7 @@ namespace GUI::Main_Menu
         // Subwindow 3
         if (show_monitoring_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(20.0, 20.0), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
             ImGui::Begin("Monitoring Panel");
                 if (ImGui::CollapsingHeader("RAM"))
                 {
@@ -112,10 +125,10 @@ namespace GUI::Main_Menu
                     ImGui::Text("Used: %.2f GB", storage_info.used_gb);
                     ImGui::Text("Available: %.2f GB", storage_info.available_gb);
 
-                    const float storage_usage = storage_info.total_gb > 0.0 ? static_cast<float>(storage_info.used_gb / storage_info.total_gb) : 0.0;
+                    const float storage_usage = storage_info.total_gb > 0 ? static_cast<float>(storage_info.used_gb / storage_info.total_gb) : 0;
 
                     ImGui::Text("Usage: %.2f %%", storage_usage * 100);
-                    ImGui::ProgressBar(storage_usage, ImVec2(-1.0, 0.0));
+                    ImGui::ProgressBar(storage_usage, ImVec2(-1, 0));
 
                     ImGui::SeparatorText("Binary GiB");
 
@@ -131,14 +144,14 @@ namespace GUI::Main_Menu
         // Subwindow 4
         if (show_notepad_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400.0, 200.0), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(400, 200), ImGuiCond_FirstUseEver);
             ImGui::Begin("Notepad Panel");
 
                 ImGui::InputTextMultiline(
                     "##Notepad_Panel",
                     notepad_text_buffer,
                     sizeof(notepad_text_buffer),
-                    ImVec2(-1.0, -1.0)
+                    ImVec2(-1, -1)
                 );
                 
             ImGui::End();
@@ -149,9 +162,11 @@ namespace GUI::Main_Menu
         // Subwindow 5
         if (show_alarm_and_indicator_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400.0, 200.0), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(400, 200), ImGuiCond_FirstUseEver);
             ImGui::Begin("Alarm/Indicator Panel");
-                GUI::Blinking_Text("flashing", ImVec4(0.0, 1.0, 1.0, 1.0), Format::Format_Timestamp_Message("Hello").c_str(), 2.0);
+                GUI::Text(text_data_information, Format::Format_Timestamp_Message("Information: RAM usage optimal. (static, testing)").c_str());
+                GUI::Text(text_data_warning, Format::Format_Timestamp_Message("Warning: Available storage space not optimal. (static, testing)").c_str());
+                GUI::Text(text_data_critical, Format::Format_Timestamp_Message("Critical: RAM usage is >90%. (static, testing)").c_str());
             ImGui::End();
         }
     }

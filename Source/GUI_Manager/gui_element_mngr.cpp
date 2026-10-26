@@ -3,30 +3,16 @@
 
 namespace GUI
 {
-    bool Cycle_Blink(float time_multiplier)
+    bool Cycle_True_False(float time_multiplier)
     {
         return static_cast<int>(ImGui::GetTime() * time_multiplier) % 2 == 0;
     }
 
-    void Blinking_Text(const std::string& blinking_type, const ImVec4& text_color, const char* text, float blinking_speed)
+    void Text(const Text_Data& data, const std::string& text)
     {
-        if (blinking_type == "flashing")
-        {
-            if (Cycle_Blink(blinking_speed))
-            {
-                ImGui::TextColored(text_color, "%s", text);
-            }
-            else
-            {
-                ImGui::Dummy(ImVec2(
-                    ImGui::CalcTextSize("%s", text).x,
-                    ImGui::GetTextLineHeight()
-                ));
-            }
-        }
+        if (data.text_type == "blinking" && !Cycle_True_False(data.blinking_speed))
+            ImGui::Dummy({ImGui::CalcTextSize(text.c_str()).x, ImGui::GetTextLineHeight()});
         else
-        {
-            ImGui::TextColored(text_color, "%s", text);
-        }
+            ImGui::TextColored(data.text_color, "%s", text.c_str());
     }
 }
