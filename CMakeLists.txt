@@ -23,7 +23,7 @@ add_executable(CCP_T1 WIN32
     Source/Timestamp_System/timestamp_sys.cpp
     Source/Chrono_System/chrono_sys.cpp
     Source/Text_Format_System/text_format_sys.cpp
-    
+    Source/Alarm_Manager/alarm_mngr.cpp
 
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp

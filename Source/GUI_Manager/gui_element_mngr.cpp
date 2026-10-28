@@ -8,11 +8,16 @@ namespace GUI
         return static_cast<int>(ImGui::GetTime() * time_multiplier) % 2 == 0;
     }
 
-    void Text(const Text_Data& data, const std::string& text)
+    void Text(const std::string& text, const Text_Data& data)
+    {
+        Text(text, data, data.text_color);
+    }
+
+    void Text(const std::string& text, const Text_Data& data, const ImVec4& text_color)
     {
         if (data.text_type == "blinking" && !Cycle_True_False(data.blinking_speed))
             ImGui::Dummy({ImGui::CalcTextSize(text.c_str()).x, ImGui::GetTextLineHeight()});
         else
-            ImGui::TextColored(data.text_color, "%s", text.c_str());
+            ImGui::TextColored(text_color, "%s", text.c_str());
     }
 }

@@ -28,6 +28,13 @@ namespace Format
 
         if (color_name == "light_red") return {1, 0.5, 0.5, 1};
         if (color_name == "light_blue") return {0, 0.5, 1, 1};
+
+        if (color_name == "dark_red") return {1, 0, 0, 0.5};
+        if (color_name == "dark_blue") return {0, 0, 1, 0.5};
+        if (color_name == "dark_green") return {0, 1, 0, 0.5};
+        if (color_name == "dark_yellow") return {1, 1, 0, 0.5};
+
+        if (color_name == "pink") return {1, 0.7, 0.8, 1};
         
         else return {1, 1, 1, 1};
     }

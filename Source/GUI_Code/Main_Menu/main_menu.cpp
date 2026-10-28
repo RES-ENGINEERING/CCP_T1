@@ -14,6 +14,7 @@
 #include "Timestamp_System/timestamp_sys.hpp"
 #include "Chrono_System/chrono_sys.hpp"
 #include "Text_Format_System/text_format_sys.hpp"
+#include "Alarm_Manager/alarm_mngr.hpp"
 
 
 namespace GUI::Main_Menu
@@ -62,8 +63,10 @@ namespace GUI::Main_Menu
             text_data_critical.text_type = "blinking";
             text_data_critical.blinking_speed = 7;
             text_data_critical.text_color = Format::Format_ImGui_Vector_4("red");
+        static Text_Data text_data_default;
+            text_data_default.text_type = "default";
 
-
+            
 
         // Subwindow 1
         ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
@@ -83,7 +86,7 @@ namespace GUI::Main_Menu
             ImGui::Begin("Information Panel");
 
                 ImGui::Text("Computer Control Panel Type I");
-                ImGui::Text("Version: 0.6.1.0");
+                ImGui::Text("Version: 0.7.0.0");
                 if (ImGui::TreeNode("Conventions"))
                 {
                     if (ImGui::TreeNode("Versioning Format"))
@@ -95,11 +98,18 @@ namespace GUI::Main_Menu
 
                         ImGui::Text("\t\t\tSTAGES:\n\t\t\t\t\t\t0: Prototype\n\t\t\t\t\t\t1: Release\n\t\t\t\t\t\t2: Playtest (Special release type)");
 
+                        ImGui::Text("\t\t\t The 'HOTFIX' number resets\n\t\t\t per minor version.\n\t\t\t Same goes for the 'Minor' number.");
+
                         ImGui::TreePop();
                     }
 
                     ImGui::TreePop();
                 }
+                GUI::Text("Special thanks to: ", text_data_default, Format::Format_ImGui_Vector_4("pink"));
+                ImGui::SameLine();
+                GUI::Text("GLFW, ", text_data_default, Format::Format_ImGui_Vector_4("blue"));
+                ImGui::SameLine();
+                GUI::Text("ImGui!", text_data_default, Format::Format_ImGui_Vector_4("yellow"));
             ImGui::End();
         }
 
@@ -146,14 +156,12 @@ namespace GUI::Main_Menu
         {
             ImGui::SetNextWindowPos(ImVec2(400, 200), ImGuiCond_FirstUseEver);
             ImGui::Begin("Notepad Panel");
-
                 ImGui::InputTextMultiline(
                     "##Notepad_Panel",
                     notepad_text_buffer,
                     sizeof(notepad_text_buffer),
                     ImVec2(-1, -1)
                 );
-                
             ImGui::End();
         }
 
@@ -162,11 +170,38 @@ namespace GUI::Main_Menu
         // Subwindow 5
         if (show_alarm_and_indicator_panel_subwindow)
         {
-            ImGui::SetNextWindowPos(ImVec2(400, 200), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowPos({400, 200}, ImGuiCond_FirstUseEver);
             ImGui::Begin("Alarm/Indicator Panel");
-                GUI::Text(text_data_information, Format::Format_Timestamp_Message("Information: RAM usage optimal. (static, testing)").c_str());
-                GUI::Text(text_data_warning, Format::Format_Timestamp_Message("Warning: Available storage space not optimal. (static, testing)").c_str());
-                GUI::Text(text_data_critical, Format::Format_Timestamp_Message("Critical: RAM usage is >90%. (static, testing)").c_str());
+                ImGui::BeginChild("Information", {225, 225}, true);
+                    GUI::Text("INFORMATION", text_data_default, Format::Format_ImGui_Vector_4("dark_blue"));
+                    ImGui::Separator();
+                    for (const auto& alarm : GUI::alarms)
+                    {
+                        if (alarm.text_data.blinking_speed == 1) GUI::Text(alarm.message, alarm.text_data);
+                    }
+                ImGui::EndChild();
+
+                ImGui::SameLine();
+
+                ImGui::BeginChild("Warning", {225, 225}, true);
+                    GUI::Text("WARNING", text_data_default, Format::Format_ImGui_Vector_4("dark_yellow"));
+                    ImGui::Separator();
+                    for (const auto& alarm : GUI::alarms)
+                    {
+                        if (alarm.text_data.blinking_speed == 4) GUI::Text(alarm.message, alarm.text_data);
+                    }
+                ImGui::EndChild();
+
+                ImGui::SameLine();
+
+                ImGui::BeginChild("Critical", {225, 225}, true);
+                    GUI::Text("CRITICAL", text_data_default, Format::Format_ImGui_Vector_4("dark_red"));
+                    ImGui::Separator();
+                    for (const auto& alarm : GUI::alarms)
+                    {
+                        if (alarm.text_data.blinking_speed == 7) GUI::Text(alarm.message, alarm.text_data);
+                    }
+                ImGui::EndChild();
             ImGui::End();
         }
     }

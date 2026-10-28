@@ -21,5 +21,7 @@ namespace GUI
     };
     
     bool Cycle_True_False(float time_multiplier);
-    void Text(const Text_Data& data, const std::string& text);
+    
+    void Text(const std::string& text, const Text_Data& data);
+    void Text(const std::string& text, const Text_Data& data, const ImVec4& text_color);
 }
