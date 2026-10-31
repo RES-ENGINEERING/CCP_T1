@@ -17,7 +17,7 @@
 #include "Alarm_Manager/alarm_mngr.hpp"
 
 
-namespace GUI::Main_Menu
+namespace GUI::Main_GUI
 {
     /* Prototype. Do not remove.
     static int amount = 50;
@@ -25,10 +25,11 @@ namespace GUI::Main_Menu
     */
     
 
-    void Render_Main_Menu()
+    void Render_Main_GUI()
     {
         static auto ram_info = HW::Obtain_RAM_Info();
         static auto storage_info = HW::Obtain_Storage_Info(L"C:\\");
+        static auto cpu_info = HW::Obtain_CPU_Info();
 
         static auto last_update = std::chrono::steady_clock::now();
         const auto current_time = std::chrono::steady_clock::now();
@@ -37,6 +38,7 @@ namespace GUI::Main_Menu
         {
             ram_info = HW::Obtain_RAM_Info();
             storage_info = HW::Obtain_Storage_Info(L"C:\\");
+            cpu_info = HW::Obtain_CPU_Info();
 
             last_update = current_time;
         }
@@ -48,8 +50,12 @@ namespace GUI::Main_Menu
         static bool show_system_information_panel_subwindow = true;
         static bool show_notepad_panel_subwindow = true;
         static bool show_alarm_and_indicator_panel_subwindow = true;
+        static bool show_settings_panel_subwindow = true;
+
+        static bool test_settings = false;
 
         static char notepad_text_buffer[16384] = "";
+        static char command_text_buffer[16384] = "";
 
         static Text_Data text_data_information;
             text_data_information.text_type = "blinking";
@@ -66,15 +72,16 @@ namespace GUI::Main_Menu
         static Text_Data text_data_default;
             text_data_default.text_type = "default";
 
-            
+
 
         // Subwindow 1
         ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
         ImGui::Begin("Subwindow Subcontrol Panel");
-            ImGui::Checkbox("Show 'CCP_T1 Information Panel", &show_ccp_t1_panel_subwindow);
-            ImGui::Checkbox("Show 'Monitoring Panel", &show_monitoring_panel_subwindow);
-            ImGui::Checkbox("Show 'Notepad Panel", &show_notepad_panel_subwindow);
-            ImGui::Checkbox("Show 'Alarm Panel", &show_alarm_and_indicator_panel_subwindow);
+            ImGui::Checkbox("Show 'CCP_T1 Information Panel'", &show_ccp_t1_panel_subwindow);
+            ImGui::Checkbox("Show 'Monitoring Panel'", &show_monitoring_panel_subwindow);
+            ImGui::Checkbox("Show 'Notepad Panel'", &show_notepad_panel_subwindow);
+            ImGui::Checkbox("Show 'Alarm Panel'", &show_alarm_and_indicator_panel_subwindow);
+            ImGui::Checkbox("Show 'Settings Panel'", &show_settings_panel_subwindow);
         ImGui::End();
 
 
@@ -123,10 +130,19 @@ namespace GUI::Main_Menu
                 if (ImGui::CollapsingHeader("RAM"))
                 {
                     ImGui::Text("Available RAM (GB): %.3f GB", ram_info.available_gb);
+                    ImGui::ProgressBar(static_cast<float>(ram_info.available_gb / 100.0), ImVec2(-1, 17), std::format("{:.3f}%", ram_info.available_gb).c_str());
                     ImGui::Text("Physical RAM (GB): %.3f GB", ram_info.total_gb);
+                    
                     ImGui::SeparatorText("Binary GiB");
                     ImGui::Text("Available RAM (GiB): %.3f GiB", ram_info.available_gib);
                     ImGui::Text("Physical RAM (GiB): %.3f GiB", ram_info.total_gib);
+                }
+
+                if (ImGui::CollapsingHeader("CPU"))
+                {
+                    GUI::Text(std::format("CPU Usage: {:.1f} %", cpu_info.usage_percent), text_data_default);
+                    ImGui::ProgressBar(static_cast<float>(cpu_info.usage_percent / 100.0), ImVec2(-1, 17), std::format("{:.1f}%", cpu_info.usage_percent).c_str());
+                    GUI::Text(std::format("Logical Processors: {}", cpu_info.logical_processors), text_data_default);           
                 }
 
                 if (ImGui::CollapsingHeader("Storage"))
@@ -138,7 +154,7 @@ namespace GUI::Main_Menu
                     const float storage_usage = storage_info.total_gb > 0 ? static_cast<float>(storage_info.used_gb / storage_info.total_gb) : 0;
 
                     ImGui::Text("Usage: %.2f %%", storage_usage * 100);
-                    ImGui::ProgressBar(storage_usage, ImVec2(-1, 0));
+                    ImGui::ProgressBar(storage_usage, ImVec2(-1, 17));
 
                     ImGui::SeparatorText("Binary GiB");
 
@@ -146,6 +162,8 @@ namespace GUI::Main_Menu
                     ImGui::Text("Used: %.2f GiB", storage_info.used_gib);
                     ImGui::Text("Available: %.2f GiB", storage_info.available_gib);
                 }
+
+                
             ImGui::End();
         }
 
@@ -202,6 +220,20 @@ namespace GUI::Main_Menu
                         if (alarm.text_data.blinking_speed == 7) GUI::Text(alarm.message, alarm.text_data);
                     }
                 ImGui::EndChild();
+            ImGui::End();
+        }
+        
+        
+        
+        if (show_settings_panel_subwindow)
+        {
+            ImGui::Begin("Settings Panel");
+                ImGui::Checkbox("TEST", &test_settings);
+
+                if (test_settings == true)
+                {
+                    GUI::Text("TEST", text_data_default, Format::Format_ImGui_Vector_4("yellow"));
+                }
             ImGui::End();
         }
     }

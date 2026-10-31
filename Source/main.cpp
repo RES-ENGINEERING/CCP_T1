@@ -17,7 +17,7 @@
 // Project include
 #include "Window_Manager/window_mngr.hpp"
 #include "GUI_Manager/gui_mngr.hpp"
-#include "GUI_Code/Main_Menu/main_menu.hpp"
+#include "GUI_Code/Main_GUI/main_gui.hpp"
 #include "Chrono_System/chrono_sys.hpp"
 
 
@@ -47,7 +47,7 @@ int main()
 
 
         GUI::Begin_Frame();
-        GUI::Main_Menu::Render_Main_Menu();
+        GUI::Main_GUI::Render_Main_GUI();
         GUI::Render();
 
         

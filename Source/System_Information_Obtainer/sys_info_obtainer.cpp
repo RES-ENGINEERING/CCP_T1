@@ -83,4 +83,69 @@ namespace HW
             available / bytes_per_gib
         };
     }
+
+    CPU_Info Obtain_CPU_Info()
+    {
+        static ULONGLONG previous_idle = 0;
+        static ULONGLONG previous_kernel = 0;
+        static ULONGLONG previous_user = 0;
+        static bool initialized = false;
+
+        FILETIME idle_time{};
+        FILETIME kernel_time{};
+        FILETIME user_time{};
+
+        SYSTEM_INFO system_info{};
+        GetSystemInfo(&system_info);
+
+        if (!GetSystemTimes(
+            &idle_time,
+            &kernel_time,
+            &user_time))
+        {
+            return {};
+        }
+
+        const auto to_uint64 = [](const FILETIME& time) -> ULONGLONG
+        {
+            return (static_cast<ULONGLONG>(time.dwHighDateTime) << 32)
+                | time.dwLowDateTime;
+        };
+
+        const ULONGLONG idle = to_uint64(idle_time);
+        const ULONGLONG kernel = to_uint64(kernel_time);
+        const ULONGLONG user = to_uint64(user_time);
+
+        CPU_Info info{};
+        info.logical_processors = system_info.dwNumberOfProcessors;
+
+        if (!initialized)
+        {
+            previous_idle = idle;
+            previous_kernel = kernel;
+            previous_user = user;
+            initialized = true;
+
+            return info;
+        }
+
+        const ULONGLONG idle_delta = idle - previous_idle;
+        const ULONGLONG kernel_delta = kernel - previous_kernel;
+        const ULONGLONG user_delta = user - previous_user;
+
+        const ULONGLONG total_delta = kernel_delta + user_delta;
+
+        if (total_delta > 0)
+        {
+            info.usage_percent =
+                100.0 * static_cast<double>(total_delta - idle_delta)
+                / static_cast<double>(total_delta);
+        }
+
+        previous_idle = idle;
+        previous_kernel = kernel;
+        previous_user = user;
+
+        return info;
+    }
 }

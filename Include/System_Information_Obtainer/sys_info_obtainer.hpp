@@ -31,6 +31,13 @@ namespace HW
         double available_gib;
     };
 
+    struct CPU_Info
+    {
+        double usage_percent;
+        DWORD logical_processors;
+    };
+
+    CPU_Info Obtain_CPU_Info();
     RAM_Info Obtain_RAM_Info();
     Storage_Info Obtain_Storage_Info(const wchar_t* drive);
 }

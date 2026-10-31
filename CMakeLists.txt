@@ -17,7 +17,7 @@ add_executable(CCP_T1 WIN32
     Source/main.cpp
     Source/Window_Manager/window_mngr.cpp
     Source/GUI_Manager/gui_mngr.cpp
-    Source/GUI_Code/Main_Menu/main_menu.cpp
+    Source/GUI_Code/Main_GUI/main_gui.cpp
     Source/System_Information_Obtainer/sys_info_obtainer.cpp
     Source/GUI_Manager/gui_element_mngr.cpp
     Source/Timestamp_System/timestamp_sys.cpp
